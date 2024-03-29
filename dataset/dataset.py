@@ -7,6 +7,35 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 from matplotlib import pyplot as plt
 from skimage import io, transform
+from torch.utils.data import Dataset, DataLoader
+from torchvision.transforms import v2
+import pandas as pd
+from skimage import io, transform
+import matplotlib.pyplot as plt
+
+
+class Rescale(object):
+
+    def __init__(self, out_dims):
+        self.out_dims = out_dims
+
+    def __call__(self, sample):
+        raw, reference = sample['raw'], sample['reference']
+        h, w = raw.shape[:2]
+        new_h, new_w = self.out_dims
+
+        raw = transform.resize(raw, (new_h, new_w))
+        reference = transform.resize(reference, (new_h, new_w))
+
+        return {'raw': raw, 'reference': reference}
+
+class ToTensor(object):
+
+    def __call__(self, sample):
+        raw, reference = sample['raw'], sample['reference']
+
+        raw, reference = raw.transpose((2,0,1)), reference.transpose((2,0,1))
+        return {'raw': torch.from_numpy(raw), 'reference': torch.from_numpy(reference)}
 
 class UIEBDataset(Dataset):
     def __init__(self, raw_dir, reference_dir, dims =(256, 256), doAugment = True, train = True, test = False, force_update = False):
@@ -17,12 +46,17 @@ class UIEBDataset(Dataset):
         self.rescale = Rescale(dims)
         self.tensorfy = ToTensor()
         self.randomErase = RandomErasing()
+        self.doAugment = doAugment
+        self.dims = dims
+        self.rescale = Rescale(dims)
+        self.tensorfy = ToTensor()
         if not (os.path.isfile(os.path.join(os.getcwd(), r"train_list.csv"))) or force_update:
             self.build_test_list(raw_dir, reference_dir)
         if train:
             self.samples = pd.read_csv(os.path.join(os.getcwd(), r"train_list.csv"))
         elif test:
             self.samples = pd.read_csv(os.path.join(os.getcwd(), r"test.csv"))
+            self.samples = pd.read_csv(os.path.join(os.getcwd(), r"test_list.csv"))
         else:
             pass
         print(self.samples.shape)
@@ -58,6 +92,28 @@ class UIEBDataset(Dataset):
             sample = self.augment(sample)
         return sample
     
+   
+
+    def augment(self, sample):
+        print("test")
+
+    def __getitem__(self, idx):
+        print("got item")
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        raw_image = io.imread(self.samples.iloc[idx, 0])
+        reference_image = io.imread(self.samples.iloc[idx, 1])
+
+        sample = {'raw': raw_image, 'reference': reference_image}
+
+        sample = self.standardize(sample)
+
+        if self.doAugment:
+            sample = self.augment(sample)
+
+        return sample
+
     def standardize(self, sample):
         sample = self.rescale(sample)
         sample = self.tensorfy(sample)
@@ -105,7 +161,8 @@ class RandomErasing(object):
 
 
 if __name__ == "__main__":
-    dataset = UIEBDataset(r"/mnt/c/code/AIM/spring_24/uiemb/raw/raw-890/raw-890", r"/mnt/c/code/AIM/spring_24/uiemb/clean/reference-890/reference-890", force_update=False)
+    dataset = UIEBDataset(r"/mnt/e/Projects/Datasets/UIEB/raw-890", r"/mnt/e/Projects/Datasets/UIEB/reference-890", force_update=False)
+
     for i, sample in enumerate(dataset):
         print("Displaying sample pair " + str(i))
 
