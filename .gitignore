@@ -377,3 +377,4 @@ android/pytorch_android_torchvision/.cxx
 ./wandb
 ./__pycache__
 *.csv
+*.png
