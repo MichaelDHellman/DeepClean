@@ -1,0 +1,37 @@
+/* style.css */
+#logo {
+    width: 150px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 10px; /* Add some top margin */
+    margin-left: 10px; /* Add some left margin */
+}
+
+#logo-text {
+    font-size: 24px; /* Adjust the font size as needed */
+    font-weight: bold; /* Make the text bold */
+    margin-left: 10px; /* Add some left margin */
+    margin-top: 20px; /* Adjust the vertical position */
+    color: #333; /* Set the text color */
+}
+
+body {
+    background-color: #f5f5f5 !important; /* Set the background color to a light shade of white */
+}
+
+.gradio-container {
+    background-color: #f5f5f5; /* Set the background color of the container to the same light shade of white */
+}
+
+.gr-box {
+    background-color: transparent; /* Make the box background transparent to match the overall theme */
+}
+
+.gr-button {
+    background-color: #0066b3; /* Set the button color to the same shade of blue as the word "Deep" in the logo */
+    color: white; /* Set the text color to white for better contrast */
+    border-radius: 4px; /* Add some border radius for a more modern look */
+}
+
+.gr-button:hover {
+    background-color: #004d85; /* Slightly darker shade of blue on hover */
+}
