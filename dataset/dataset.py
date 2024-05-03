@@ -10,7 +10,6 @@ from skimage import io, transform
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import v2
 import pandas as pd
-from skimage import io, transform
 import matplotlib.pyplot as plt
 
 
@@ -41,13 +40,12 @@ class UIEBDataset(Dataset):
     def __init__(self, raw_dir, reference_dir, dims =(256, 256), doAugment = True, train = True, test = False, force_update = False):
         self.raw_dir = raw_dir
         self.reference_dir = reference_dir
-        self.doAugment = True
+        self.doAugment = False
         self.dims = dims
         self.rescale = Rescale(dims)
         self.randomErase = RandomErasing()
         self.doAugment = doAugment
         self.dims = dims
-        self.rescale = Rescale(dims)
         self.tensorfy = ToTensor()
         if not (os.path.isfile(os.path.join(os.getcwd(), r"train_list.csv"))) or force_update:
             self.build_test_list(raw_dir, reference_dir)
@@ -121,6 +119,8 @@ if __name__ == "__main__":
     dataset = UIEBDataset(r"/mnt/e/Projects/Datasets/UIEB/raw-890", r"/mnt/e/Projects/Datasets/UIEB/reference-890", force_update=False)
 
     for i, sample in enumerate(dataset):
+        print(sample)
+        
         print("Displaying sample pair " + str(i))
 
         p, axarr = plt.subplots(2)

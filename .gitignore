@@ -358,7 +358,7 @@ venv/
 *.log
 sweep/
 *.ckpt
-!logo3.jpg
+!LOGO3.jpg
 
 # Android build artifacts
 android/pytorch_android/.cxx

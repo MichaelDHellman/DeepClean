@@ -1,19 +1,18 @@
 import torch 
 import torch.nn as nn
-from torchsummary import summary
 
 #convolutional block
 class convBlock(nn.Module):
     def __init__(self, inputZ, outputZ):
         super().__init__()
 
-        self.conv1 = nn.Conv2d(inputZ, outputZ, kernel_size = 4, stride = 1, padding = 2)
+        self.conv1 = nn.Conv2d(inputZ, outputZ, kernel_size = 3, padding = 1)
         self.bn1 = nn.BatchNorm2d(outputZ)
 
-        self.conv2 = nn.Conv2d(outputZ, outputZ, kernel_size = 4, stride = 1, padding = 2)
+        self.conv2 = nn.Conv2d(outputZ, outputZ, kernel_size = 3, padding = 1)
         self.bn2 = nn.BatchNorm2d(outputZ)
 
-        self.relu = nn.LeakyReLU(.1)
+        self.relu = nn.ReLU()
 
     def forward(self, inputs):
 
@@ -43,7 +42,7 @@ class encoderBlock(nn.Module):
 class decoderBlock(nn.Module):
     def __init__(self, inputZ, outputZ):
         super().__init__()
-        self.up = nn.ConvTranspose2d(inputZ, outputZ, kernel_size = 2, stride = 1, padding = 0)
+        self.up = nn.ConvTranspose2d(inputZ, outputZ, kernel_size = 2, stride = 2, padding = 0)
         self.conv = convBlock(outputZ + outputZ, outputZ)
 
     def forward(self, inputs, skip):
